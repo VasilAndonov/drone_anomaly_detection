@@ -9,6 +9,10 @@ from utils import get_logger, load_config
 from sklearn.svm import OneClassSVM
 from sklearn.preprocessing import StandardScaler
 
+from sklearn.decomposition import PCA
+from sklearn.neighbors import LocalOutlierFactor
+from sklearn.pipeline import Pipeline
+
 # Initialize Logger
 logger = get_logger('ModelTraining')
 
@@ -90,6 +94,65 @@ def train_one_class_svm(df, params):
     
     return model, df_results, features
 
+def train_lof_pca_pipeline(df, params):
+    """
+    Trains a Local Outlier Factor (LOF) model on a PCA-compressed manifold.
+    This resolves the Curse of Dimensionality for distance-based algorithms.
+    """
+    logger.info(f"Initializing PCA ({params['pca_components']} components) + LOF Pipeline")
+    
+    # Isolate numeric features
+    features = df.select_dtypes(include=[np.number]).columns
+    features = [col for col in features if col not in ['drone_id']]
+    X = df[features]
+    
+    logger.info("Standardizing temporal feature space for PCA projection...")
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    # Initialize PCA
+    pca = PCA(n_components=params['pca_components'], random_state=42)
+    
+    # Initialize LOF (Note: LOF does not have a standard 'predict' method for new data
+    # when novelty=False, but fit_predict works for the training set).
+    lof = LocalOutlierFactor(
+        n_neighbors=params['n_neighbors'],
+        contamination=params['contamination'],
+        novelty=False,
+        n_jobs=-1
+    )
+    
+    logger.info("Projecting Manifold via PCA...")
+    X_pca = pca.fit_transform(X_scaled)
+    
+    logger.info("Computing Local Density Distances via LOF...")
+    predictions = lof.fit_predict(X_pca)
+    
+    # LOF's negative outlier factor is akin to a decision score (lower is more anomalous)
+    anomaly_scores = lof.negative_outlier_factor_
+    
+    # We must package the Scaler and PCA into a single object for serialization
+    # We don't include LOF in the pipeline here because LOF does not support the standard
+    # transform/predict API well when saving it for future raw data prediction. 
+    # For anomaly detection serialization, saving the fitted PCA space is critical.
+    preprocessing_pipeline = Pipeline([
+        ('scaler', StandardScaler()),
+        ('pca', PCA(n_components=params['pca_components'], random_state=42))
+    ])
+    preprocessing_pipeline.fit(X)
+    
+    # Append results
+    df_results = df.copy()
+    df_results['anomaly_label'] = predictions
+    df_results['anomaly_score'] = anomaly_scores
+    
+    anomaly_count = len(df_results[df_results['anomaly_label'] == -1])
+    logger.info(f"LOF Training complete. Isolated {anomaly_count} anomalous dense events.")
+    
+    # We return the preprocessing pipeline as the 'model' to save, 
+    # as LOF novelty=False objects cannot be strictly used for future prediction.
+    return preprocessing_pipeline, df_results, features
+
 if __name__ == "__main__":
     # Allow passing different config files via command line for later experiments
     config_file = sys.argv[1] if len(sys.argv) > 1 else 'config/exp1_baseline.json'
@@ -116,6 +179,8 @@ if __name__ == "__main__":
             model, df_predictions, used_features = train_isolation_forest(df, config['model_params'])
         elif config['model_params']['algorithm'] == "OneClassSVM":
             model, df_predictions, used_features = train_one_class_svm(df, config['model_params'])
+        elif config['model_params']['algorithm'] == "LOF_PCA_Pipeline":
+            model, df_predictions, used_features = train_lof_pca_pipeline(df, config['model_params'])
         else:
             logger.error(f"Algorithm {config['model_params']['algorithm']} not yet implemented.")
             sys.exit(1)

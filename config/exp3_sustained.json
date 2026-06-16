@@ -1,12 +1,15 @@
 {
     "experiment_name": "Exp3_Sustained_Context",
     "data_paths": {
-        "input": "data/fused_clean_pipeline.csv",
-        "output": "data/engineered_features.csv"
+        "input": "data/engineered_features.csv",
+        "output_predictions": "data/exp3_predictions.csv",
+        "model_path": "data/exp3_lof_pipeline.pkl"
     },
-    "temporal_params": {
-        "rolling_window_hours": 5,
-        "lag_steps": 1
+    "model_params": {
+        "algorithm": "LOF_PCA_Pipeline",
+        "pca_components": 45,
+        "n_neighbors": 20,
+        "contamination": 0.05
     },
     "mlflow": {
         "tracking_uri": "sqlite:///mlruns/mlflow.db"

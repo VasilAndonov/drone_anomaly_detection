@@ -49,3 +49,27 @@
 2026-06-17 02:09:51,678 - ForensicEvaluation - INFO - Macro Indicator: acceleration_z | Cluster Distribution Shift: 1479.6%
 2026-06-17 02:09:51,678 - ForensicEvaluation - INFO - Macro Indicator: acceleration_z_lag_1 | Cluster Distribution Shift: 1314.6%
 2026-06-17 02:09:51,678 - ForensicEvaluation - INFO - Forensic evaluation complete.
+2026-06-17 02:12:14,302 - ModelTraining - INFO - --- Starting Experiment: Exp3_Sustained_Context ---
+2026-06-17 02:12:14,302 - ModelTraining - INFO - Loading training matrix from data/engineered_features.csv
+2026-06-17 02:12:14,445 - ModelTraining - INFO - Initializing PCA (45 components) + LOF Pipeline
+2026-06-17 02:12:14,447 - ModelTraining - INFO - Standardizing temporal feature space for PCA projection...
+2026-06-17 02:12:14,466 - ModelTraining - INFO - Projecting Manifold via PCA...
+2026-06-17 02:12:14,473 - ModelTraining - INFO - Computing Local Density Distances via LOF...
+2026-06-17 02:12:14,622 - ModelTraining - INFO - LOF Training complete. Isolated 455 anomalous dense events.
+2026-06-17 02:12:15,449 - ModelTraining - INFO - Predictions saved to data/exp3_predictions.csv
+2026-06-17 02:12:15,449 - ModelTraining - INFO - Model successfully serialized and saved to data/exp3_lof_pipeline.pkl
+2026-06-17 02:12:18,045 - ModelTraining - INFO - Experiment run finalized and tracked in MLflow.
+2026-06-17 02:12:29,488 - ForensicEvaluation - INFO - Loading predictions matrix from data/exp3_predictions.csv
+2026-06-17 02:12:29,621 - ForensicEvaluation - INFO - Starting Forensic Interpretability Profiling...
+2026-06-17 02:12:29,630 - ForensicEvaluation - INFO - Density Separation: 8632 Normal Events vs 455 Anomalies.
+2026-06-17 02:12:29,645 - ForensicEvaluation - INFO - --- ROOT CAUSE EXPLAINABILITY ---
+2026-06-17 02:12:29,645 - ForensicEvaluation - INFO - Most severe anomaly detected at: 2023-12-20 00:00:00
+2026-06-17 02:12:29,646 - ForensicEvaluation - INFO - Trigger: hover_duration_s | Normal Mean: 14.09 | Anomaly Value: 79.00 | Deviation: 4.77 Z-Scores
+2026-06-17 02:12:29,646 - ForensicEvaluation - INFO - Trigger: cpu_usage | Normal Mean: 40.15 | Anomaly Value: 6.50 | Deviation: 3.35 Z-Scores
+2026-06-17 02:12:29,646 - ForensicEvaluation - INFO - Trigger: hover_duration_s_rolling_std_5H | Normal Mean: 12.15 | Anomaly Value: 31.13 | Deviation: 2.85 Z-Scores
+2026-06-17 02:12:29,646 - ForensicEvaluation - INFO - Trigger: battery_level_pct_lag_1 | Normal Mean: 39.13 | Anomaly Value: 97.00 | Deviation: 2.47 Z-Scores
+2026-06-17 02:12:29,649 - ForensicEvaluation - INFO - --- GLOBAL DISTRIBUTION PROFILING ---
+2026-06-17 02:12:29,649 - ForensicEvaluation - INFO - Macro Indicator: velocity_x | Cluster Distribution Shift: 52941.3%
+2026-06-17 02:12:29,649 - ForensicEvaluation - INFO - Macro Indicator: velocity_x_lag_1 | Cluster Distribution Shift: 19881.9%
+2026-06-17 02:12:29,649 - ForensicEvaluation - INFO - Macro Indicator: acceleration_x | Cluster Distribution Shift: 4665.0%
+2026-06-17 02:12:29,650 - ForensicEvaluation - INFO - Forensic evaluation complete.
