@@ -153,3 +153,6 @@
 2026-06-17 02:40:41,607 - OptunaOptimization - INFO - Optimization Complete. Best Trial: 7
 2026-06-17 02:40:41,608 - OptunaOptimization - INFO - Best Hyperparameters: {'n_estimators': 50, 'max_samples': 0.6, 'max_features': 0.7}
 2026-06-17 02:40:44,711 - OptunaOptimization - INFO - Final champion model saved to data/final_champion_model.pkl
+2026-06-17 02:46:31,435 - EvidentlyAI - INFO - Initializing Evidently AI Data Drift Analysis...
+2026-06-17 02:46:31,446 - EvidentlyAI - INFO - Reference Set: 4543 logs. Current Set: 4544 logs.
+2026-06-17 02:46:36,146 - EvidentlyAI - INFO - Evidently AI interactive report successfully generated: data/data_drift_report.html
