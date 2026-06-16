@@ -12,3 +12,17 @@
 2026-06-17 02:03:48,803 - ModelTraining - INFO - Predictions saved to data/exp1_predictions.csv
 2026-06-17 02:03:48,805 - ModelTraining - INFO - Model successfully serialized and saved to data/exp1_isolation_forest.pkl
 2026-06-17 02:03:52,711 - ModelTraining - INFO - Experiment run finalized and tracked in MLflow.
+2026-06-17 02:05:54,552 - ForensicEvaluation - INFO - Loading predictions matrix from data/exp1_predictions.csv
+2026-06-17 02:05:54,595 - ForensicEvaluation - INFO - Starting Forensic Interpretability Profiling...
+2026-06-17 02:05:54,599 - ForensicEvaluation - INFO - Density Separation: 8651 Normal Events vs 456 Anomalies.
+2026-06-17 02:05:54,602 - ForensicEvaluation - INFO - --- ROOT CAUSE EXPLAINABILITY ---
+2026-06-17 02:05:54,603 - ForensicEvaluation - INFO - Most severe anomaly detected at: 2021-12-03 18:00:00
+2026-06-17 02:05:54,603 - ForensicEvaluation - INFO - Trigger: control_command_frequency | Normal Mean: 3.01 | Anomaly Value: 20.00 | Deviation: 3.98 Z-Scores
+2026-06-17 02:05:54,603 - ForensicEvaluation - INFO - Trigger: packet_loss_rate | Normal Mean: 0.01 | Anomaly Value: 0.10 | Deviation: 3.79 Z-Scores
+2026-06-17 02:05:54,603 - ForensicEvaluation - INFO - Trigger: response_time | Normal Mean: 168.34 | Anomaly Value: 1000.00 | Deviation: 2.75 Z-Scores
+2026-06-17 02:05:54,603 - ForensicEvaluation - INFO - Trigger: port_number | Normal Mean: 1795.52 | Anomaly Value: 8888.00 | Deviation: 2.18 Z-Scores
+2026-06-17 02:05:54,604 - ForensicEvaluation - INFO - --- GLOBAL DISTRIBUTION PROFILING ---
+2026-06-17 02:05:54,604 - ForensicEvaluation - INFO - Macro Indicator: velocity_y | Cluster Distribution Shift: 5033.9%
+2026-06-17 02:05:54,605 - ForensicEvaluation - INFO - Macro Indicator: acceleration_y | Cluster Distribution Shift: 1990.4%
+2026-06-17 02:05:54,605 - ForensicEvaluation - INFO - Macro Indicator: velocity_x | Cluster Distribution Shift: 1131.7%
+2026-06-17 02:05:54,605 - ForensicEvaluation - INFO - Forensic evaluation complete.
