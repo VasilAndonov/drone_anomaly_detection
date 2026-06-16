@@ -1,0 +1,18 @@
+{
+    "experiment_name": "Exp5_Meta_Ensemble",
+    "data_paths": {
+        "exp1_preds": "data/exp1_predictions.csv",
+        "exp2_preds": "data/exp2_predictions.csv",
+        "exp3_preds": "data/exp3_predictions.csv",
+        "output_predictions": "data/exp5_predictions.csv"
+    },
+    "model_params": {
+        "algorithm": "Ensemble"
+    },
+    "ensemble_params": {
+        "strategy": "majority_vote"
+    },
+    "mlflow": {
+        "tracking_uri": "sqlite:///mlruns/mlflow.db"
+    }
+}

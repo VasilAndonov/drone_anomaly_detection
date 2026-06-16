@@ -202,6 +202,63 @@ def execute_strict_ensemble(params):
     
     return None, df_results, []
 
+def execute_ensemble_tribunal(params):
+    """
+    Executes a Multi-Model Tribunal.
+    Supports 'strict_intersection' (unanimous) or 'majority_vote' (>= 2 models).
+    """
+    strategy = params.get('ensemble_params', {}).get('strategy', 'strict_intersection')
+    logger.info(f"Initializing Meta-Ensemble Tribunal using strategy: {strategy}")
+    
+    logger.info("Loading prediction matrices from Exp 1, Exp 2, and Exp 3...")
+    df1 = pd.read_csv(params['data_paths']['exp1_preds'])
+    df2 = pd.read_csv(params['data_paths']['exp2_preds'])
+    df3 = pd.read_csv(params['data_paths']['exp3_preds'])
+    
+    df1_sub = df1[['timestamp', 'drone_id', 'anomaly_label']].rename(columns={'anomaly_label': 'label_exp1'})
+    df2_sub = df2[['timestamp', 'drone_id', 'anomaly_label']].rename(columns={'anomaly_label': 'label_exp2'})
+    df3_sub = df3[['timestamp', 'drone_id', 'anomaly_label']].rename(columns={'anomaly_label': 'label_exp3'})
+    
+    logger.info("Executing relational temporal alignment...")
+    df_merged = df1_sub.merge(df2_sub, on=['timestamp', 'drone_id'], how='inner')
+    df_merged = df_merged.merge(df3_sub, on=['timestamp', 'drone_id'], how='inner')
+    
+    # Calculate total anomaly votes per timestamp (True = 1 vote)
+    anomaly_votes = (df_merged['label_exp1'] == -1).astype(int) + \
+                    (df_merged['label_exp2'] == -1).astype(int) + \
+                    (df_merged['label_exp3'] == -1).astype(int)
+    
+    if strategy == "strict_intersection":
+        # Requires all 3 votes
+        df_merged['ensemble_label'] = np.where(anomaly_votes == 3, -1, 1)
+    elif strategy == "majority_vote":
+        # Requires 2 or more votes
+        df_merged['ensemble_label'] = np.where(anomaly_votes >= 2, -1, 1)
+    else:
+        logger.error(f"Unknown ensemble strategy: {strategy}")
+        sys.exit(1)
+        
+    df_results = df3.copy()
+    if 'anomaly_score' in df_results.columns:
+        df_results = df_results.drop(columns=['anomaly_label', 'anomaly_score'])
+    else:
+        df_results = df_results.drop(columns=['anomaly_label'])
+        
+    df_results = df_results.merge(df_merged[['timestamp', 'drone_id', 'ensemble_label']], on=['timestamp', 'drone_id'], how='left')
+    df_results.rename(columns={'ensemble_label': 'anomaly_label'}, inplace=True)
+    
+    # Synthesize decision scores based on vote confidence
+    # 3 votes = -100 (High Confidence Anomaly)
+    # 2 votes = -50  (Moderate Confidence Anomaly)
+    # <2 votes = 100 (Normal)
+    score_mapping = np.where(anomaly_votes == 3, -100, np.where(anomaly_votes == 2, -50, 100))
+    df_results['anomaly_score'] = score_mapping
+    
+    anomaly_count = len(df_results[df_results['anomaly_label'] == -1])
+    logger.info(f"Ensemble Complete. The {strategy} tribunal escalated {anomaly_count} anomalies.")
+    
+    return None, df_results, []
+
 if __name__ == "__main__":
     # Allow passing different config files via command line for later experiments
     config_file = sys.argv[1] if len(sys.argv) > 1 else 'config/exp1_baseline.json'
