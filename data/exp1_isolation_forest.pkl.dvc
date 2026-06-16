@@ -1,0 +1,5 @@
+outs:
+- md5: 50f3dd356b99dd2a8471240c5d6af9fc
+  size: 1415777
+  hash: md5
+  path: exp1_isolation_forest.pkl

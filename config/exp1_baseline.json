@@ -1,0 +1,17 @@
+{
+    "experiment_name": "Exp1_Raw_Baseline",
+    "data_paths": {
+        "input": "data/fused_clean_pipeline.csv",
+        "output_predictions": "data/exp1_predictions.csv",
+        "model_path": "data/exp1_isolation_forest.pkl"
+    },
+    "model_params": {
+        "algorithm": "IsolationForest",
+        "contamination": 0.05,
+        "random_state": 42,
+        "n_estimators": 100
+    },
+    "mlflow": {
+        "tracking_uri": "sqlite:///mlruns/mlflow.db"
+    }
+}
