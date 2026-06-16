@@ -1,0 +1,14 @@
+{
+    "experiment_name": "Exp3_Sustained_Context",
+    "data_paths": {
+        "input": "data/fused_clean_pipeline.csv",
+        "output": "data/engineered_features.csv"
+    },
+    "temporal_params": {
+        "rolling_window_hours": 5,
+        "lag_steps": 1
+    },
+    "mlflow": {
+        "tracking_uri": "sqlite:///mlruns/mlflow.db"
+    }
+}

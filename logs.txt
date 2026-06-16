@@ -1,0 +1,6 @@
+2026-06-17 02:01:01,024 - FeatureEngineering - INFO - Starting Temporal Feature Engineering Pipeline...
+2026-06-17 02:01:01,028 - FeatureEngineering - INFO - Loading matrix from data/fused_clean_pipeline.csv
+2026-06-17 02:01:01,072 - FeatureEngineering - INFO - Engineering features: Window Size = 5H, Lag Steps = 1
+2026-06-17 02:01:01,225 - FeatureEngineering - INFO - Purged 20 NaN rows introduced by temporal shifting.
+2026-06-17 02:01:02,052 - FeatureEngineering - INFO - Engineered matrix saved to data/engineered_features.csv with shape (9087, 195)
+2026-06-17 02:01:02,057 - FeatureEngineering - INFO - Feature Engineering Pipeline completed successfully.
