@@ -73,3 +73,24 @@
 2026-06-17 02:12:29,649 - ForensicEvaluation - INFO - Macro Indicator: velocity_x_lag_1 | Cluster Distribution Shift: 19881.9%
 2026-06-17 02:12:29,649 - ForensicEvaluation - INFO - Macro Indicator: acceleration_x | Cluster Distribution Shift: 4665.0%
 2026-06-17 02:12:29,650 - ForensicEvaluation - INFO - Forensic evaluation complete.
+2026-06-17 02:17:45,739 - ModelTraining - INFO - --- Starting Experiment: Exp4_Strict_Ensemble ---
+2026-06-17 02:17:45,741 - ModelTraining - INFO - Initializing Strict Ensemble Tribunal (Intersection Strategy)
+2026-06-17 02:17:45,741 - ModelTraining - INFO - Loading prediction matrices from Exp 1, Exp 2, and Exp 3...
+2026-06-17 02:17:46,049 - ModelTraining - INFO - Executing relational temporal alignment across matrices...
+2026-06-17 02:17:46,061 - ModelTraining - INFO - Ensemble Complete. The tribunal mathematically agreed on exactly 55 high-confidence anomalies.
+2026-06-17 02:17:46,866 - ModelTraining - INFO - Predictions saved to data/exp4_predictions.csv
+2026-06-17 02:17:46,870 - ModelTraining - INFO - Experiment run finalized and tracked in MLflow.
+2026-06-17 02:17:55,562 - ForensicEvaluation - INFO - Loading predictions matrix from data/exp4_predictions.csv
+2026-06-17 02:17:55,694 - ForensicEvaluation - INFO - Starting Forensic Interpretability Profiling...
+2026-06-17 02:17:55,702 - ForensicEvaluation - INFO - Density Separation: 9032 Normal Events vs 55 Anomalies.
+2026-06-17 02:17:55,717 - ForensicEvaluation - INFO - --- ROOT CAUSE EXPLAINABILITY ---
+2026-06-17 02:17:55,717 - ForensicEvaluation - INFO - Most severe anomaly detected at: 2021-01-04 02:00:00
+2026-06-17 02:17:55,718 - ForensicEvaluation - INFO - Trigger: hover_duration_s_lag_1 | Normal Mean: 14.26 | Anomaly Value: 83.00 | Deviation: 4.93 Z-Scores
+2026-06-17 02:17:55,718 - ForensicEvaluation - INFO - Trigger: packet_loss_rate | Normal Mean: 0.01 | Anomaly Value: 0.10 | Deviation: 3.66 Z-Scores
+2026-06-17 02:17:55,718 - ForensicEvaluation - INFO - Trigger: hover_duration_s_rolling_std_5H | Normal Mean: 12.23 | Anomaly Value: 31.65 | Deviation: 2.87 Z-Scores
+2026-06-17 02:17:55,718 - ForensicEvaluation - INFO - Trigger: hover_duration_s_rolling_mean_5H | Normal Mean: 14.25 | Anomaly Value: 31.20 | Deviation: 2.75 Z-Scores
+2026-06-17 02:17:55,721 - ForensicEvaluation - INFO - --- GLOBAL DISTRIBUTION PROFILING ---
+2026-06-17 02:17:55,721 - ForensicEvaluation - INFO - Macro Indicator: acceleration_z_lag_1 | Cluster Distribution Shift: 13170.0%
+2026-06-17 02:17:55,721 - ForensicEvaluation - INFO - Macro Indicator: acceleration_z | Cluster Distribution Shift: 12160.4%
+2026-06-17 02:17:55,722 - ForensicEvaluation - INFO - Macro Indicator: acceleration_z_rolling_mean_5H | Cluster Distribution Shift: 12126.7%
+2026-06-17 02:17:55,722 - ForensicEvaluation - INFO - Forensic evaluation complete.

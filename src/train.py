@@ -153,6 +153,55 @@ def train_lof_pca_pipeline(df, params):
     # as LOF novelty=False objects cannot be strictly used for future prediction.
     return preprocessing_pipeline, df_results, features
 
+def execute_strict_ensemble(params):
+    """
+    Executes a strict intersection (Consensus Tribunal) across multiple model predictions.
+    Utilizes relational inner-joins to align matrices of different temporal lengths.
+    """
+    logger.info("Initializing Strict Ensemble Tribunal (Intersection Strategy)")
+    
+    # Load the prediction matrices
+    logger.info("Loading prediction matrices from Exp 1, Exp 2, and Exp 3...")
+    df1 = pd.read_csv(params['exp1_preds'])
+    df2 = pd.read_csv(params['exp2_preds'])
+    df3 = pd.read_csv(params['exp3_preds'])
+    
+    # Isolate the keys and labels from each experiment
+    df1_sub = df1[['timestamp', 'drone_id', 'anomaly_label']].rename(columns={'anomaly_label': 'label_exp1'})
+    df2_sub = df2[['timestamp', 'drone_id', 'anomaly_label']].rename(columns={'anomaly_label': 'label_exp2'})
+    df3_sub = df3[['timestamp', 'drone_id', 'anomaly_label']].rename(columns={'anomaly_label': 'label_exp3'})
+    
+    # Execute Relational Inner-Joins to align the temporal events
+    logger.info("Executing relational temporal alignment across matrices...")
+    df_merged = df1_sub.merge(df2_sub, on=['timestamp', 'drone_id'], how='inner')
+    df_merged = df_merged.merge(df3_sub, on=['timestamp', 'drone_id'], how='inner')
+    
+    # Strict Intersection: All three algorithms must output -1 (Anomaly)
+    df_merged['ensemble_label'] = np.where(
+        (df_merged['label_exp1'] == -1) & 
+        (df_merged['label_exp2'] == -1) & 
+        (df_merged['label_exp3'] == -1), 
+        -1, 1
+    )
+    
+    df_results = df3.copy()
+    if 'anomaly_score' in df_results.columns:
+        df_results = df_results.drop(columns=['anomaly_label', 'anomaly_score'])
+    else:
+        df_results = df_results.drop(columns=['anomaly_label'])
+        
+    # Map the ensemble decisions back to the full feature matrix
+    df_results = df_results.merge(df_merged[['timestamp', 'drone_id', 'ensemble_label']], on=['timestamp', 'drone_id'], how='left')
+    df_results.rename(columns={'ensemble_label': 'anomaly_label'}, inplace=True)
+    
+    # Synthesize a decision score for the forensic evaluation script
+    df_results['anomaly_score'] = np.where(df_results['anomaly_label'] == -1, -100, 100)
+    
+    anomaly_count = len(df_results[df_results['anomaly_label'] == -1])
+    logger.info(f"Ensemble Complete. The tribunal mathematically agreed on exactly {anomaly_count} high-confidence anomalies.")
+    
+    return None, df_results, []
+
 if __name__ == "__main__":
     # Allow passing different config files via command line for later experiments
     config_file = sys.argv[1] if len(sys.argv) > 1 else 'config/exp1_baseline.json'
@@ -165,41 +214,50 @@ if __name__ == "__main__":
     with mlflow.start_run(run_name=f"Train_{config['model_params']['algorithm']}"):
         logger.info(f"--- Starting Experiment: {config['experiment_name']} ---")
         
-        # Load Data
-        input_path = config['data_paths']['input']
-        logger.info(f"Loading training matrix from {input_path}")
-        df = pd.read_csv(input_path)
-        
-        # Log Hyperparameters
+        # 1. Conditional Data Loading
+        if config['model_params']['algorithm'] != "Ensemble":
+            input_path = config['data_paths']['input']
+            logger.info(f"Loading training matrix from {input_path}")
+            df = pd.read_csv(input_path)
+        else:
+            df = None
+            
+        # 2. Log Hyperparameters
         for key, value in config['model_params'].items():
             mlflow.log_param(key, value)
             
-        # Train Model
+        # 3. Algorithm Routing
         if config['model_params']['algorithm'] == "IsolationForest":
             model, df_predictions, used_features = train_isolation_forest(df, config['model_params'])
         elif config['model_params']['algorithm'] == "OneClassSVM":
             model, df_predictions, used_features = train_one_class_svm(df, config['model_params'])
         elif config['model_params']['algorithm'] == "LOF_PCA_Pipeline":
             model, df_predictions, used_features = train_lof_pca_pipeline(df, config['model_params'])
+        elif config['model_params']['algorithm'] == "Ensemble":
+            # Pass the data_paths dictionary directly to the ensemble function
+            model, df_predictions, used_features = execute_strict_ensemble(config['data_paths'])
         else:
             logger.error(f"Algorithm {config['model_params']['algorithm']} not yet implemented.")
             sys.exit(1)
             
-        # Save Predictions for Forensic Evaluation
+        # 4. Save Predictions for Forensic Evaluation
         output_path = config['data_paths']['output_predictions']
         df_predictions.to_csv(output_path, index=False)
         logger.info(f"Predictions saved to {output_path}")
         
-        # Save Model via Pickle
-        model_path = config['data_paths']['model_path']
-        with open(model_path, 'wb') as f:
-            pickle.dump(model, f)
-        logger.info(f"Model successfully serialized and saved to {model_path}")
-        
-        # Log Model and Metrics to MLflow
-        mlflow.sklearn.log_model(model, "isolation_forest_model")
+        # 5. Save Model via Pickle (Skip for Ensemble as there is no single model object)
+        if model is not None:
+            model_path = config['data_paths']['model_path']
+            with open(model_path, 'wb') as f:
+                pickle.dump(model, f)
+            logger.info(f"Model successfully serialized and saved to {model_path}")
+            
+            # Log Model to MLflow
+            mlflow.sklearn.log_model(model, f"{config['model_params']['algorithm']}_model")
+            mlflow.log_metric("feature_count", len(used_features))
+            
+        # 6. Log Final Metrics
         anomaly_ratio = len(df_predictions[df_predictions['anomaly_label'] == -1]) / len(df_predictions)
         mlflow.log_metric("actual_anomaly_ratio", anomaly_ratio)
-        mlflow.log_metric("feature_count", len(used_features))
         
         logger.info("Experiment run finalized and tracked in MLflow.")
