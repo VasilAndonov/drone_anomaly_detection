@@ -1,0 +1,5 @@
+outs:
+- md5: 0dba5acefe04916014af079e887ddd6e
+  size: 51629
+  hash: md5
+  path: exp6_kmeans.pkl

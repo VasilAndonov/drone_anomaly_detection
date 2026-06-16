@@ -1,0 +1,17 @@
+{
+    "experiment_name": "Exp6_KMeans_Hybrid",
+    "data_paths": {
+        "input": "data/engineered_features.csv",
+        "output_predictions": "data/exp6_predictions.csv",
+        "model_path": "data/exp6_kmeans.pkl"
+    },
+    "model_params": {
+        "algorithm": "KMeans_Distance",
+        "n_clusters": 3,
+        "contamination": 0.05,
+        "random_state": 42
+    },
+    "mlflow": {
+        "tracking_uri": "sqlite:///mlruns/mlflow.db"
+    }
+}

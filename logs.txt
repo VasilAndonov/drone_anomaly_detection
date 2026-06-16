@@ -115,3 +115,27 @@
 2026-06-17 02:20:31,092 - ForensicEvaluation - INFO - Macro Indicator: acceleration_z | Cluster Distribution Shift: 12160.4%
 2026-06-17 02:20:31,092 - ForensicEvaluation - INFO - Macro Indicator: acceleration_z_rolling_mean_5H | Cluster Distribution Shift: 12126.7%
 2026-06-17 02:20:31,093 - ForensicEvaluation - INFO - Forensic evaluation complete.
+2026-06-17 02:23:18,895 - ModelTraining - INFO - --- Starting Experiment: Exp6_KMeans_Hybrid ---
+2026-06-17 02:23:18,895 - ModelTraining - INFO - Loading training matrix from data/engineered_features.csv
+2026-06-17 02:23:19,042 - ModelTraining - INFO - Initializing K-Means Hybrid with 3 operating states...
+2026-06-17 02:23:19,044 - ModelTraining - INFO - Standardizing temporal feature space for geometric clustering...
+2026-06-17 02:23:19,065 - ModelTraining - INFO - Fitting K-Means centroids...
+2026-06-17 02:23:19,166 - ModelTraining - INFO - Calculating Euclidean distances to nearest operating states...
+2026-06-17 02:23:19,255 - ModelTraining - INFO - K-Means Hybrid complete. Isolated 455 spatial anomalies.
+2026-06-17 02:23:20,078 - ModelTraining - INFO - Predictions saved to data/exp6_predictions.csv
+2026-06-17 02:23:20,078 - ModelTraining - INFO - Model successfully serialized and saved to data/exp6_kmeans.pkl
+2026-06-17 02:23:22,820 - ModelTraining - INFO - Experiment run finalized and tracked in MLflow.
+2026-06-17 02:23:33,868 - ForensicEvaluation - INFO - Loading predictions matrix from data/exp6_predictions.csv
+2026-06-17 02:23:34,001 - ForensicEvaluation - INFO - Starting Forensic Interpretability Profiling...
+2026-06-17 02:23:34,009 - ForensicEvaluation - INFO - Density Separation: 8632 Normal Events vs 455 Anomalies.
+2026-06-17 02:23:34,024 - ForensicEvaluation - INFO - --- ROOT CAUSE EXPLAINABILITY ---
+2026-06-17 02:23:34,024 - ForensicEvaluation - INFO - Most severe anomaly detected at: 2023-12-24 01:00:00
+2026-06-17 02:23:34,025 - ForensicEvaluation - INFO - Trigger: control_command_frequency_lag_1 | Normal Mean: 3.06 | Anomaly Value: 20.00 | Deviation: 3.91 Z-Scores
+2026-06-17 02:23:34,025 - ForensicEvaluation - INFO - Trigger: error_rate | Normal Mean: 0.03 | Anomaly Value: 0.20 | Deviation: 3.63 Z-Scores
+2026-06-17 02:23:34,025 - ForensicEvaluation - INFO - Trigger: encryption_status_rolling_mean_5H | Normal Mean: 0.70 | Anomaly Value: 0.00 | Deviation: 3.48 Z-Scores
+2026-06-17 02:23:34,025 - ForensicEvaluation - INFO - Trigger: port_number_rolling_mean_5H | Normal Mean: 1866.31 | Anomaly Value: 6641.60 | Deviation: 3.28 Z-Scores
+2026-06-17 02:23:34,028 - ForensicEvaluation - INFO - --- GLOBAL DISTRIBUTION PROFILING ---
+2026-06-17 02:23:34,029 - ForensicEvaluation - INFO - Macro Indicator: velocity_x | Cluster Distribution Shift: 12510.8%
+2026-06-17 02:23:34,029 - ForensicEvaluation - INFO - Macro Indicator: velocity_x_lag_1 | Cluster Distribution Shift: 4330.1%
+2026-06-17 02:23:34,029 - ForensicEvaluation - INFO - Macro Indicator: acceleration_z_lag_1 | Cluster Distribution Shift: 3678.8%
+2026-06-17 02:23:34,029 - ForensicEvaluation - INFO - Forensic evaluation complete.

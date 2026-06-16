@@ -13,6 +13,9 @@ from sklearn.decomposition import PCA
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.pipeline import Pipeline
 
+from sklearn.cluster import KMeans
+from sklearn.metrics import pairwise_distances_argmin_min
+
 # Initialize Logger
 logger = get_logger('ModelTraining')
 
@@ -259,6 +262,62 @@ def execute_ensemble_tribunal(params):
     
     return None, df_results, []
 
+def train_kmeans_hybrid(df, params):
+    """
+    Trains a K-Means clustering model to define distinct operating states.
+    Anomalies are defined as the points furthest from their assigned cluster centroid.
+    """
+    logger.info(f"Initializing K-Means Hybrid with {params['n_clusters']} operating states...")
+    
+    features = df.select_dtypes(include=[np.number]).columns
+    features = [col for col in features if col not in ['drone_id']]
+    X = df[features]
+    
+    # Distance-based clustering strictly requires scaling
+    logger.info("Standardizing temporal feature space for geometric clustering...")
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    # 1. Fit K-Means to establish the Centroids (Normal Operating States)
+    kmeans = KMeans(
+        n_clusters=params['n_clusters'], 
+        random_state=params['random_state'], 
+        n_init='auto'
+    )
+    logger.info("Fitting K-Means centroids...")
+    kmeans.fit(X_scaled)
+    
+    # 2. Calculate the distance from every point to its closest centroid
+    logger.info("Calculating Euclidean distances to nearest operating states...")
+    closest, distances = pairwise_distances_argmin_min(X_scaled, kmeans.cluster_centers_)
+    
+    # 3. Define the Anomaly Boundary based on the target contamination rate
+    # We find the threshold distance where the top 5% furthest points lie.
+    threshold_distance = np.percentile(distances, 100 * (1 - params['contamination']))
+    
+    # If distance > threshold, it's an anomaly (-1), else normal (1)
+    predictions = np.where(distances > threshold_distance, -1, 1)
+    
+    # For decision scores, K-Means doesn't have a native one.
+    # We will use the negative distance so that lower (more negative) = more anomalous
+    anomaly_scores = -distances
+    
+    # We must package the Scaler and KMeans into a Pipeline for serialization
+    pipeline = Pipeline([
+        ('scaler', StandardScaler()),
+        ('kmeans', KMeans(n_clusters=params['n_clusters'], random_state=params['random_state'], n_init='auto'))
+    ])
+    pipeline.fit(X)
+    
+    df_results = df.copy()
+    df_results['anomaly_label'] = predictions
+    df_results['anomaly_score'] = anomaly_scores
+    
+    anomaly_count = len(df_results[df_results['anomaly_label'] == -1])
+    logger.info(f"K-Means Hybrid complete. Isolated {anomaly_count} spatial anomalies.")
+    
+    return pipeline, df_results, features
+
 if __name__ == "__main__":
     # Allow passing different config files via command line for later experiments
     config_file = sys.argv[1] if len(sys.argv) > 1 else 'config/exp1_baseline.json'
@@ -290,9 +349,10 @@ if __name__ == "__main__":
             model, df_predictions, used_features = train_one_class_svm(df, config['model_params'])
         elif config['model_params']['algorithm'] == "LOF_PCA_Pipeline":
             model, df_predictions, used_features = train_lof_pca_pipeline(df, config['model_params'])
+        elif config['model_params']['algorithm'] == "KMeans_Distance":
+            model, df_predictions, used_features = train_kmeans_hybrid(df, config['model_params'])
         elif config['model_params']['algorithm'] == "Ensemble":
-            # Pass the data_paths dictionary directly to the ensemble function
-            model, df_predictions, used_features = execute_strict_ensemble(config['data_paths'])
+            model, df_predictions, used_features = execute_ensemble_tribunal(config)
         else:
             logger.error(f"Algorithm {config['model_params']['algorithm']} not yet implemented.")
             sys.exit(1)
