@@ -1,0 +1,35 @@
+# Python Environments & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+.pytest_cache/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Data & Models (Tracked by DVC)
+data/*.csv
+data/*.pkl
+data/*.html
+*.pkl
+*.h5
+*.model
+
+# MLflow Tracking & Logs
+mlruns/
+*.db
+logs.txt
+*.log
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+EOF
