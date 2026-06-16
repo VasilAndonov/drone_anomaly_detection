@@ -1,0 +1,17 @@
+{
+    "experiment_name": "Exp2_Temporal_Shift",
+    "data_paths": {
+        "input": "data/engineered_features.csv",
+        "output_predictions": "data/exp2_predictions.csv",
+        "model_path": "data/exp2_ocsvm.pkl"
+    },
+    "model_params": {
+        "algorithm": "OneClassSVM",
+        "nu": 0.05,
+        "kernel": "rbf",
+        "gamma": "scale"
+    },
+    "mlflow": {
+        "tracking_uri": "sqlite:///mlruns/mlflow.db"
+    }
+}

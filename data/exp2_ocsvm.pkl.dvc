@@ -1,0 +1,5 @@
+outs:
+- md5: 412d71a1db2a15e67bc995b18757f8e2
+  size: 807602
+  hash: md5
+  path: exp2_ocsvm.pkl

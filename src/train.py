@@ -6,6 +6,9 @@ import sys
 from sklearn.ensemble import IsolationForest
 from utils import get_logger, load_config
 
+from sklearn.svm import OneClassSVM
+from sklearn.preprocessing import StandardScaler
+
 # Initialize Logger
 logger = get_logger('ModelTraining')
 
@@ -45,6 +48,48 @@ def train_isolation_forest(df, params):
     
     return model, df_results, features
 
+def train_one_class_svm(df, params):
+    """
+    Trains a One-Class SVM on temporally engineered features.
+    Standardization is mandatory for SVMs to prevent scale dominance.
+    """
+    logger.info(f"Initializing One-Class SVM with nu={params['nu']}")
+    
+    # Isolate numeric features
+    features = df.select_dtypes(include=[np.number]).columns
+    features = [col for col in features if col not in ['drone_id']]
+    X = df[features]
+    
+    # SVMs use distance calculations and are highly sensitive to feature scales.
+    # We MUST scale the data (mean=0, variance=1)
+    logger.info("Standardizing temporal feature space for SVM compatibility...")
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    # Initialize model
+    model = OneClassSVM(
+        nu=params['nu'],
+        kernel=params['kernel'],
+        gamma=params['gamma']
+    )
+    
+    logger.info("Fitting OCSVM model on scaled feature space...")
+    model.fit(X_scaled)
+    
+    # Predict (-1 = Anomaly, 1 = Normal)
+    predictions = model.predict(X_scaled)
+    anomaly_scores = model.decision_function(X_scaled)
+    
+    # Append results
+    df_results = df.copy()
+    df_results['anomaly_label'] = predictions
+    df_results['anomaly_score'] = anomaly_scores
+    
+    anomaly_count = len(df_results[df_results['anomaly_label'] == -1])
+    logger.info(f"OCSVM Training complete. Isolated {anomaly_count} anomalous temporal events.")
+    
+    return model, df_results, features
+
 if __name__ == "__main__":
     # Allow passing different config files via command line for later experiments
     config_file = sys.argv[1] if len(sys.argv) > 1 else 'config/exp1_baseline.json'
@@ -69,8 +114,10 @@ if __name__ == "__main__":
         # Train Model
         if config['model_params']['algorithm'] == "IsolationForest":
             model, df_predictions, used_features = train_isolation_forest(df, config['model_params'])
+        elif config['model_params']['algorithm'] == "OneClassSVM":
+            model, df_predictions, used_features = train_one_class_svm(df, config['model_params'])
         else:
-            logger.error("Algorithm not yet implemented in train.py")
+            logger.error(f"Algorithm {config['model_params']['algorithm']} not yet implemented.")
             sys.exit(1)
             
         # Save Predictions for Forensic Evaluation
