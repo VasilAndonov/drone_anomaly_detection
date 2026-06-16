@@ -1,0 +1,14 @@
+{
+    "experiment_name": "Optuna_Champion_Optimization",
+    "data_paths": {
+        "input": "data/engineered_features.csv",
+        "model_path": "data/final_champion_model.pkl"
+    },
+    "optuna_params": {
+        "n_trials": 15,
+        "contamination": 0.05
+    },
+    "mlflow": {
+        "tracking_uri": "sqlite:///mlruns/mlflow.db"
+    }
+}

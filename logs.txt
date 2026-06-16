@@ -139,3 +139,17 @@
 2026-06-17 02:23:34,029 - ForensicEvaluation - INFO - Macro Indicator: velocity_x_lag_1 | Cluster Distribution Shift: 4330.1%
 2026-06-17 02:23:34,029 - ForensicEvaluation - INFO - Macro Indicator: acceleration_z_lag_1 | Cluster Distribution Shift: 3678.8%
 2026-06-17 02:23:34,029 - ForensicEvaluation - INFO - Forensic evaluation complete.
+2026-06-17 02:40:17,144 - AblationStudy - INFO - --- Initiating Feature Ablation Study on Champion Model (Isolation Forest) ---
+2026-06-17 02:40:17,147 - AblationStudy - INFO - Training Baseline_Full_Temporal_Pipeline (188 dimensions)...
+2026-06-17 02:40:17,592 - AblationStudy - INFO - Result -> Boundary Gap: 0.0356
+2026-06-17 02:40:17,592 - AblationStudy - INFO - Training Ablation_1_Only_Kinematic (48 dimensions)...
+2026-06-17 02:40:17,782 - AblationStudy - INFO - Result -> Boundary Gap: 0.0501
+2026-06-17 02:40:17,782 - AblationStudy - INFO - Training Ablation_2_Only_Cyber (32 dimensions)...
+2026-06-17 02:40:17,973 - AblationStudy - INFO - Result -> Boundary Gap: 0.0791
+2026-06-17 02:40:17,973 - AblationStudy - INFO - Training Ablation_3_No_Temporal_Memory (47 dimensions)...
+2026-06-17 02:40:18,185 - AblationStudy - INFO - Result -> Boundary Gap: 0.0572
+2026-06-17 02:40:18,185 - AblationStudy - INFO - Ablation Study Complete.
+2026-06-17 02:40:33,838 - OptunaOptimization - INFO - --- Starting Optuna Optimization on Champion Model ---
+2026-06-17 02:40:41,607 - OptunaOptimization - INFO - Optimization Complete. Best Trial: 7
+2026-06-17 02:40:41,608 - OptunaOptimization - INFO - Best Hyperparameters: {'n_estimators': 50, 'max_samples': 0.6, 'max_features': 0.7}
+2026-06-17 02:40:44,711 - OptunaOptimization - INFO - Final champion model saved to data/final_champion_model.pkl
