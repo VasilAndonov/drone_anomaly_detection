@@ -32,21 +32,30 @@ An ablation study confirmed that removing the temporal rolling windows or decoup
 To reproduce the experimental pipeline:
 1. Install dependencies
 `pip install -r requirements.txt`
+
 2. Pull datasets via DVC
 `dvc pull` 
+
 3. Feature Engineering
-`python src/features.py
+`python src/features.py`
+
 4. Experiments
 `python src/train.py config/exp1_baseline.json` (Iterate 1-6)
+
 5. Evaluations
 `python src/evaluate.py data/exp5_predictions.csv`
+
 6. Visualizations
 `python src/visualize.py data/exp1_predictions.csv Exp1_IsolationForest` (Iterate 1-6)
+
 7. Ablation Study
 `python src/ablation.py`
+
 8. Optimization
 `python src/optimize.py`
+
 9. Monitoring with Evidently AI
 `python src/evidently_report.py`
+
 10. MLflow Dashboard
 `mlflow ui --backend-store-uri sqlite:///mlruns/mlflow.db`
