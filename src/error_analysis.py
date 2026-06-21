@@ -67,7 +67,7 @@ def plot_uncertainty_distribution(results_df, margin):
     print("Generating Uncertainty Distribution Plot...")
     
     plt.figure(figsize=(12, 6))
-    sns.histplot(results_df['decision_score'], bins = 100, kde = True, color = "steelblue")
+    sns.histplot(results_df['decision_score'], bins = 100, color = "steelblue")
     
     # Draw the boundary and the Zone of Uncertainty
     plt.axvline(x = 0, color = 'red', linestyle = '--', linewidth = 2, label = 'Decision Boundary (0.0)')
