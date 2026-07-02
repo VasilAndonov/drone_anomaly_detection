@@ -1,11 +1,11 @@
-# Drone Anomaly Detection: Dual-Sensor Fusion for Autonomous UAVs
+# Unsupervised Meta-Ensembles for Autonomous UAVs: A Dual-Sensor Approach to Cyber-Physical Anomaly Detection
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Machine%20Learning-orange.svg)
 ![MLflow](https://img.shields.io/badge/MLflow-Tracking_&_Registry-0194E2.svg)
 ![Optuna](https://img.shields.io/badge/Optuna-Hyperparameter_Optimization-blueviolet.svg)
 
-> **Key Achievement:** By implementing a fault-tolerant Majority-Vote Meta-Ensemble across 195 cyber-physical dimensions, this architecture successfully distilled over 450 baseline statistical anomalies down to 55 high-confidence events. This represents an 88% reduction in systemic noise, demonstrating the framework's capability to isolate complex, multi-vector structural deviations without relying on predefined historical signatures.
+> **Key Achievement:** By implementing a fault-tolerant Majority-Vote Meta-Ensemble across 195 cyber-physical dimensions, this architecture distilled over 450 baseline statistical anomalies down to 55 high-confidence events. This represents an 88% reduction in systemic noise, demonstrating the framework's capability to isolate complex, multi-vector structural deviations without relying on predefined historical signatures.
 
 ![Threat Fingerprint](plots/error_analysis/4_shap_error_bar.png)
 *Figure: SHAP Feature Explainability highlighting the drivers of cyber-physical boundary errors.*
@@ -13,9 +13,9 @@
 ---
 
 ## 1. Problem Formulation & Significance
-Drone fleets operate in complex, hostile environments where relying on predefined threat signatures (malware hashes, static threshold alerts) is fundamentally insufficient. Latent hardware degradation and zero-day cyber attacks (e.g., Command & Control hijacking, GPS spoofing, DDoS) rarely trigger single-metric alarms. 
+Drone fleets operate in complex, hostile environments where relying on predefined threat signatures (malware hashes, static threshold alerts) is fundamentally insufficient. Latent hardware degradation and zero-day cyber attacks (Command & Control hijacking, GPS spoofing, DDoS) rarely trigger single-metric alarms. 
 
-**The Mission:** To engineer a dual-sensor, unsupervised machine learning architecture capable of independently monitoring physical kinematics and network health, flagging the top 5% most structurally abnormal, multi-vector events for human forensic review.
+**The Mission:** To engineer a dual-sensor, unsupervised machine learning architecture capable of independently monitoring physical kinematics and network health, flagging the top 5% most abnormal, multi-vector events for human review.
 
 ## 2. Core Hypotheses & Methodology
 1. **The Kinematic Hypothesis:** Unsupervised anomaly detection on multi-variate telemetry can isolate physical failures undetectable by static alerts.
@@ -36,7 +36,7 @@ Following a 6-experiment evaluation phase (including PCA+LOF, One-Class SVMs, an
 * **Final Deployment:** Majority-Vote Meta-Ensemble (Intersection of Tree, Boundary, and Density models)
 * **Dimensionality:** 195 engineered features (Dual-Sensor Fusion)
 * **Contamination Rate:** 0.05 (Top 5% Anomaly Isolation)
-* **Explainability:** Integrated **SHAP** (SHapley Additive exPlanations) to crack the black-box boundaries and explicitly map spatial vulnerabilities (e.g., packet loss vs. battery drain).
+* **Explainability:** Integrated **SHAP** (SHapley Additive exPlanations) to crack the black-box boundaries and explicitly map spatial vulnerabilities (packet loss vs. battery drain).
 
 ### The Ablation Proof
 Ablation study confirmed that removing the temporal rolling windows or decoupling the cyber/kinematic sensors resulted in severe blind spots to complex, multi-vector attacks, explicitly proving the necessity of the 195-dimensional matrix.
