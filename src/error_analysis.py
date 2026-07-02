@@ -6,7 +6,11 @@ import seaborn as sns
 import shap
 from sklearn.ensemble import IsolationForest
 
-os.makedirs("plots/error_analysis", exist_ok=True)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+PLOT_DIR = os.path.join(PROJECT_ROOT, "plots", "error_analysis")
+
+os.makedirs(PLOT_DIR, exist_ok=True)
 sns.set_theme(style="whitegrid", palette="muted")
 
 def load_environment():
@@ -76,7 +80,7 @@ def plot_uncertainty_distribution(results_df, margin):
     plt.ylabel("Frequency")
     plt.legend()
     plt.tight_layout()
-    plt.savefig("plots/error_analysis/1_uncertainty_distribution.png", dpi=300)
+    plt.savefig(os.path.join(PLOT_DIR, "1_uncertainty_distribution.png"), dpi=300)
     plt.close()
 
 def plot_borderline_feature_variance(results_df):
@@ -113,7 +117,7 @@ def plot_borderline_feature_variance(results_df):
     
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()
-    plt.savefig("plots/error_analysis/2_borderline_scatter.png", dpi=300)
+    plt.savefig(os.path.join(PLOT_DIR, "2_borderline_scatter.png"), dpi=300)
     plt.close()
 
 def execute_shap_error_explainability(X, model, results_df):
@@ -134,7 +138,7 @@ def execute_shap_error_explainability(X, model, results_df):
     shap.summary_plot(shap_values, X_errors, show=False)
     plt.title("SHAP Analysis: Features Driving Borderline Errors", fontsize=14, fontweight='bold')
     plt.tight_layout()
-    plt.savefig("plots/error_analysis/3_shap_error_summary.png", dpi=300)
+    plt.savefig(os.path.join(PLOT_DIR, "3_shap_error_summary.png"), dpi=300)
     plt.close()
 
     # 2. SHAP Bar Plot
@@ -142,7 +146,7 @@ def execute_shap_error_explainability(X, model, results_df):
     shap.summary_plot(shap_values, X_errors, plot_type="bar", show=False, color="crimson")
     plt.title("Mean Absolute SHAP Value (Magnitude of Confusion)", fontsize=14, fontweight='bold')
     plt.tight_layout()
-    plt.savefig("plots/error_analysis/4_shap_error_bar.png", dpi=300)
+    plt.savefig(os.path.join(PLOT_DIR, "4_shap_error_bar.png"), dpi=300)
     plt.close()
 
 def extract_confusion_examples(results_df):
@@ -183,4 +187,4 @@ if __name__ == "__main__":
     
     extract_confusion_examples(results)
     
-    print("\n Pipeline Complete. All diagnostic plots saved to 'plots/error_analysis/'.")
+    print(f"\n Pipeline Complete. All diagnostic plots saved to '{PLOT_DIR}'.")
