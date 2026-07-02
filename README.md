@@ -5,7 +5,7 @@
 ![MLflow](https://img.shields.io/badge/MLflow-Tracking_&_Registry-0194E2.svg)
 ![Optuna](https://img.shields.io/badge/Optuna-Hyperparameter_Optimization-blueviolet.svg)
 
-> **Key Achievement:** By implementing a fault-tolerant Majority-Vote Meta-Ensemble across 195 cyber-physical dimensions, this architecture successfully distilled over 450 noisy baseline alerts down to exactly 55 high-confidence threat profiles, achieving an **88% reduction in SOC alert fatigue** without sacrificing zero-day detection capabilities.
+> **Key Achievement:** By implementing a fault-tolerant Majority-Vote Meta-Ensemble across 195 cyber-physical dimensions, this architecture successfully distilled over 450 baseline statistical anomalies down to 55 high-confidence events. This represents an 88% reduction in systemic noise, demonstrating the framework's capability to isolate complex, multi-vector structural deviations without relying on predefined historical signatures.
 
 ![Threat Fingerprint](plots/error_analysis/4_shap_error_bar.png)
 *Figure: SHAP Feature Explainability highlighting the drivers of cyber-physical boundary errors.*
@@ -30,7 +30,7 @@ This repository demonstrates full-lifecycle MLOps maturity:
 * **`Evidently AI`:** Automated data drift monitoring evaluating 189 dimensions to ensure long-term operational stability.
 
 ## 4. Model Card
-Following a rigorous 6-experiment evaluation phase (including PCA+LOF, One-Class SVMs, and K-Means Hybrids), a finalized champion model was selected to combat Euclidean magnitude bias and the curse of dimensionality.
+Following a 6-experiment evaluation phase (including PCA+LOF, One-Class SVMs, and K-Means Hybrids), a finalized champion model was selected to combat Euclidean magnitude bias and the curse of dimensionality.
 
 * **Base Architecture:** Temporally-Shifted Isolation Forest (Optimized via Optuna)
 * **Final Deployment:** Majority-Vote Meta-Ensemble (Intersection of Tree, Boundary, and Density models)
@@ -39,7 +39,7 @@ Following a rigorous 6-experiment evaluation phase (including PCA+LOF, One-Class
 * **Explainability:** Integrated **SHAP** (SHapley Additive exPlanations) to crack the black-box boundaries and explicitly map spatial vulnerabilities (e.g., packet loss vs. battery drain).
 
 ### The Ablation Proof
-A rigorous ablation study confirmed that removing the temporal rolling windows or decoupling the cyber/kinematic sensors resulted in severe mathematical blind spots to complex, multi-vector attacks, explicitly proving the necessity of the 195-dimensional matrix.
+Ablation study confirmed that removing the temporal rolling windows or decoupling the cyber/kinematic sensors resulted in severe blind spots to complex, multi-vector attacks, explicitly proving the necessity of the 195-dimensional matrix.
 
 ---
 
